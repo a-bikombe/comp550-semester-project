@@ -22,6 +22,7 @@ router2 = 0;
 
 # Send packets (user input for which city they are in (randomly choose between 3 cities to assign to user's device) and which they are sending to (choose between 3 - 1 device in each city))
 
+
 def send():
 	# "Y/N to connect to server"
 	# Acknowledgement print: "Your device is a [device1/2/3] in [city1/2/3]"
@@ -29,7 +30,7 @@ def send():
 	return chosen_device;
 
 def receive(device, city):
-	
+
 	return 0;
 
 dest_device = send();
