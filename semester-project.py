@@ -21,8 +21,11 @@ device3 = "smartphone";
 devices = [device1, device2, device3];
 
 # Routers
-router1 = "";
-router2 = "";
+router1 = "Nashville, TN";
+router2 = "Phoenix, AZ";
+
+first_hop = 0;
+second_hop = 0;
 
 # Send packets (user input for which city they are in (randomly choose between 3 cities to assign to user's device) and which they are sending to (choose between 3 - 1 device in each city))
 def connect():
@@ -42,10 +45,43 @@ def connect():
 	
 
 def send():
-	chosen_device = input("Choose the device you'd like to send a message to: ");
+	chosen_device = input("Choose the device you'd like to send a message to [Device 1, Device 2, Device 3]: ");
 	return chosen_device;
 
 def receive(device, city):
+	print(device, ", ", city);
+	if source_device_city[1] == city1:
+		if city == city1 or city == city3:
+			first_hop = router1;
+			second_hop = 0;
+		elif city == city2:
+			first_hop = router1;
+			second_hop = router2;
+		else:
+			return 0;
+	elif source_device_city[1] == city2:
+		if city == city1:
+			first_hop = router2;
+			second_hop = router1;
+		elif city == city2 or city == city3:
+			first_hop = router2;
+			second_hop = 0;
+		else:
+			return 0;
+	elif source_device_city[1] == city3:
+		if city == city1:
+			first_hop = router1;
+		elif city == city2 or city == city3:
+			first_hop = router2;
+		else:
+			return 3;
+	else:
+		return 0;
+
+	routers = [first_hop, second_hop];
+	return routers;
+
+def acknowledgement():
 	return 0;
 
 source_device_city = connect();
