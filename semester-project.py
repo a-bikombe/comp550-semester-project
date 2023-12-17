@@ -6,8 +6,6 @@ Purpose: Simulation of packet transfer between two devices
 
 import random
 
-#  The options for fictional devices that the user can choose from will originate from different cities, and the program will choose the best router to transfer data between the devices, this being the closest and therefore most efficient router between the two cities/devices.
-
 # Cities
 city1 = "Manchester, NH";
 city2 = "San Francisco, CA";
@@ -23,17 +21,14 @@ devices = [device1, device2, device3];
 # Routers
 router1 = "Nashville, TN";
 router2 = "Phoenix, AZ";
+routers = [];
 
-first_hop = 0;
-second_hop = 0;
-
-# Send packets (user input for which city they are in (randomly choose between 3 cities to assign to user's device) and which they are sending to (choose between 3 - 1 device in each city))
 def connect():
 	connect = input("Type [Y/N] to connect to the messaging server: ");
 	if connect == "Y":
-		source_device = random.choices(devices);
-		source_city = random.choices(cities);
-		print("Your device is a ", source_device, " in ", source_city);
+		source_device = str(random.choices(devices)).strip(" '[]");
+		source_city = str(random.choices(cities)).strip(" '[]");
+		print("Your device is a", source_device, "in", source_city);
 		source_device_city = [source_device, source_city];
 		return source_device_city;
 	elif connect == "N":
@@ -42,15 +37,14 @@ def connect():
 	else:
 		print("Incorrect input.")
 		return 0;
-	
 
 def send():
-	chosen_device = input("Choose the device you'd like to send a message to [Device 1, Device 2, Device 3]: ");
+	chosen_device = input("Choose the device you'd like to send a message to [1, 2, 3]: ");
 	return chosen_device;
 
-def receive(device, city):
-	print(device, ", ", city);
-	if source_device_city[1] == city1:
+def receive(source_device_city, city):
+	source_city = str(source_device_city[1]).strip(" '[]");
+	if source_city == city1:
 		if city == city1 or city == city3:
 			first_hop = router1;
 			second_hop = 0;
@@ -58,8 +52,8 @@ def receive(device, city):
 			first_hop = router1;
 			second_hop = router2;
 		else:
-			return 0;
-	elif source_device_city[1] == city2:
+			return "Error: City 1";
+	elif source_city == city2:
 		if city == city1:
 			first_hop = router2;
 			second_hop = router1;
@@ -67,22 +61,30 @@ def receive(device, city):
 			first_hop = router2;
 			second_hop = 0;
 		else:
-			return 0;
-	elif source_device_city[1] == city3:
+			return "Error: City 2";
+	elif source_city == city3:
 		if city == city1:
 			first_hop = router1;
+			second_hop = 0;
 		elif city == city2 or city == city3:
 			first_hop = router2;
+			second_hop = 0;
 		else:
-			return 3;
+			return "Error: City 3";
 	else:
-		return 0;
+		return "Error comparing to city";
 
 	routers = [first_hop, second_hop];
+
+	if second_hop == 0:
+		print(source_city, " => First hop: ", first_hop, " => ", city)
+	else:
+		print(source_city, " => First hop: ", first_hop, " => Second hop: ", second_hop, " => ", city)
 	return routers;
 
 def acknowledgement():
-	return 0;
+	acknowledgement = "Message successfully sent";
+	return acknowledgement;
 
 source_device_city = connect();
 
@@ -90,11 +92,14 @@ if source_device_city != 0:
 	dest_device = send();
 
 	# If statement that connects device to respective city
-	if dest_device == "Device 1":
+	if dest_device == "1":
 		city = city1;
-	elif dest_device == "Device 2":
+	elif dest_device == "2":
 		city = city2;
-	elif dest_device == "Device 3":
+	elif dest_device == "3":
 		city = city3;
 
-	receive(dest_device, city);
+	if receive(source_device_city, city):
+		print(acknowledgement());
+	else:
+		print("Error sending message");
